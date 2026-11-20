@@ -25,6 +25,21 @@ case "${1:-}" in
     echo "==> Asking Lean what was proved"
     lake env lean /verify/Verify.lean
     ;;
+  recheck)
+    # Network OFF. Replay every compiled declaration through the kernel again,
+    # this time loading the finished files instead of compiling source. This
+    # catches "environment hacking": metaprograms that sneak unchecked
+    # declarations into the compiled output.
+    cd "$PROOF"
+    if [ "${2:-}" = "--fresh" ]; then
+      echo "==> Replaying everything Main depends on into an empty environment (single-threaded, very slow)"
+      lake env leanchecker --fresh Main
+    else
+      echo "==> Re-checking every compiled file in parallel"
+      lake env leanchecker
+    fi
+    echo "LEANCHECKER PASS"
+    ;;
   *)
-    echo "usage: in-container.sh deps|build" >&2; exit 2 ;;
+    echo "usage: in-container.sh deps|build|recheck [--fresh]" >&2; exit 2 ;;
 esac
