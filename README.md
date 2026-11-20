@@ -121,6 +121,20 @@ build volume. How strong that isolation is depends on your Docker setup, so
 use a machine you're comfortable running untrusted code on. The build can be
 stopped and restarted, and resumes where it left off.
 
+## Report your run
+
+Every independent run makes the result more trustworthy, whether it passes or
+fails. **Please report it, especially a failure.**
+
+[Open a run report](https://github.com/0xshae/RH-proof/issues/new?template=run-report.md)
+and include:
+
+- the `VERDICT` block printed at the end of `scripts/verify.sh`
+- that the checksums matched (`scripts/fetch.sh` prints `OK` for each part)
+- the commit of this repo you ran (`git rev-parse HEAD`)
+- your machine: OS, CPU cores, RAM, and memory given to Docker
+- how long the build took
+- if it failed, the last ~50 lines of `work/logs/verify.log`
 
 ## What we found so far
 
