@@ -6,9 +6,10 @@ PROOF=/home/lean/proof
 case "${1:-}" in
   deps)
     # Network ON. Copy the proof into the build volume and fetch Mathlib.
-    if [ ! -f "$PROOF/lakefile.toml" ]; then
+    if [ ! -f "$PROOF/.copied" ]; then
       echo "==> Copying proof source into build volume"
       cp -R /src/. "$PROOF/"
+      touch "$PROOF/.copied"   # only after a complete copy, so an interrupted copy is redone
     fi
     cd "$PROOF"
     echo "==> Fetching Mathlib at the pinned commit, plus its prebuilt files"

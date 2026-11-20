@@ -23,4 +23,7 @@ ENV PATH=/home/lean/.elan/bin:$PATH
 # elan downloads toolchains lazily; install now, because the build step has no network.
 RUN elan toolchain install "${LEAN_TOOLCHAIN}" && lean --version
 
+# Pre-create the build folder so the Docker volume mounted here is owned by 'lean', not root.
+RUN mkdir -p /home/lean/proof
+
 COPY --chown=lean verify/in-container.sh /home/lean/in-container.sh
