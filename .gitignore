@@ -1,0 +1,9 @@
+# Downloaded and extracted proof (fetched by scripts/fetch.sh, never committed)
+work/
+
+# Lean build outputs
+.lake/
+*.olean
+*.ilean
+
+.DS_Store
