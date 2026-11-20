@@ -47,8 +47,11 @@ Here *s* can be a complex number, a point on a 2D plane.
 
 **3. What matters is where zeta equals zero.** Zeta is zero at −2, −4, −6, …
 (the "trivial zeros", which are well understood). All its other zeros lie in a
-vertical strip between 0 and 1. Every one found so far, more than ten trillion,
-lies exactly on the middle line, where the real part is ½.
+vertical strip between 0 and 1. Every one that has been checked lies exactly
+on the middle line, where the real part is ½. Platt and Trudgian checked all
+zeros up to height 3·10¹², more than ten trillion of them ("The Riemann
+hypothesis is true up to 3·10¹²", *Bulletin of the London Mathematical
+Society*, 2021). That is background, not evidence for the proof checked here.
 
 **4. The Riemann Hypothesis says *all* of them do.** If it's true, prime
 numbers are as regular as they could possibly be. It has been open for over
@@ -112,9 +115,12 @@ Step 3 needs a big machine. The proof is about eight times the size of
 Mathlib. In Docker Desktop, give the VM as much memory as you can
 (Settings → Resources).
 
-Step 3 runs the proof's code inside a container with **networking switched
-off**, as an unprivileged user, so it can't touch your files or the internet.
-It can be stopped and restarted, and resumes where it left off.
+Step 3 runs the proof's code in a Docker container with **networking
+disabled**, as an unprivileged user, with no access to your files beyond the
+build volume. How strong that isolation is depends on your Docker setup, so
+use a machine you're comfortable running untrusted code on. The build can be
+stopped and restarted, and resumes where it left off.
+
 
 ## What we found so far
 
@@ -143,8 +149,9 @@ From the static audit (`scripts/audit.sh`):
 the Generalized Riemann Hypothesis. **Those four statements are written by the
 proof's authors** (in `Statements.lean`), not taken from Mathlib, so the
 computer can only confirm they are *proved*. Whether they *mean* GRH is for a
-human to judge. They read correctly to us, and step 3 prints them in full so
-you can judge too. The headline `RiemannHypothesis` claim does not have this
+human to judge. On the maintainer's reading they match the standard
+statements, but **no number theorist has reviewed them yet**. Step 3 prints
+them in full so you can judge too. The headline `RiemannHypothesis` claim does not have this
 caveat.
 
 ## Repository layout
