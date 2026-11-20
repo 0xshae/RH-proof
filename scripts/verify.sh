@@ -41,10 +41,17 @@ if [ -z "$axioms" ]; then
   echo "FAIL: Lean did not report the axioms (see $LOG)"; exit 1
 fi
 echo "Lean reports: $axioms"
-list=$(echo "$axioms" | sed -E 's/.*\[(.*)\]/\1/' | tr -d ' ' | tr ',' '\n' | sort | tr '\n' ' ')
-if [ "$list" = "Classical.choice Quot.sound propext " ]; then
+if ! grep -q "CHECK 4 PASS" "$LOG"; then
+  echo "FAIL: the extra (GRH) statement check did not pass (see $LOG)"; exit 1
+fi
+# Every theorem's axiom list, main and extra, must be within the standard three.
+extra=$(tr '\n' ' ' < "$LOG" | grep -oE "depends on axioms: \[[^]]*\]" \
+        | sed -E 's/.*\[(.*)\]/\1/' | tr -d ' ' | tr ',' '\n' | grep . | sort -u \
+        | grep -vxE 'propext|Classical\.choice|Quot\.sound' || true)
+if [ -z "$extra" ]; then
   echo "PASS: the proof was checked by Lean's kernel, proves Mathlib's RiemannHypothesis,"
-  echo "      and uses only Lean's three standard axioms."
+  echo "      and every claimed theorem uses only Lean's three standard axioms."
+  echo "      The four GRH statements are the authors' own definitions; read them in $LOG."
 else
-  echo "FAIL: unexpected axioms: $list"; exit 1
+  echo "FAIL: unexpected axioms:"; printf '  %s\n' $extra; exit 1
 fi

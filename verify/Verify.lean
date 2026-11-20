@@ -37,3 +37,30 @@ run_cmd do
    Anything else (sorryAx, Lean.ofReduceBool, a custom axiom) means the proof
    assumes something it did not prove. scripts/verify.sh checks this list. -/
 #print axioms riemannHypothesis
+
+/- Extra claims: the Generalized Riemann Hypothesis for Dirichlet L-functions.
+
+   Main.lean also claims four statements about Dirichlet L-functions. Unlike
+   RiemannHypothesis, these statements are NOT from Mathlib: the proof's authors
+   wrote them, in Statements.lean. So the kernel can only tell us they are
+   proved; a human has to read the definitions below and judge whether they
+   say what GRH says. We print each one, check each theorem has exactly that
+   type, and list its axioms. -/
+run_cmd do
+  let env ← getEnv
+  for (thm, stmt) in [(``LFunction_ne_zero_of_half_lt_re, ``DirichletLNonvanishingRightOfHalf),
+                      (``LFunction_eq_zero_re, ``DirichletLZerosOnLine),
+                      (``LFunction_eq_zero_re_of_isPrimitive, ``PrimitiveDirichletLZerosOnLine),
+                      (``riemannZeta_eq_zero_re, ``RiemannZetaZerosOnLine)] do
+    let some ci := env.find? thm | throwError "FAIL: missing {thm}"
+    unless ci.type == .const stmt [] do throwError "FAIL: {thm} does not have type {stmt}"
+  logInfo "CHECK 4 PASS: each extra theorem has exactly the type printed below"
+
+#print DirichletLNonvanishingRightOfHalf
+#print DirichletLZerosOnLine
+#print PrimitiveDirichletLZerosOnLine
+#print RiemannZetaZerosOnLine
+#print axioms LFunction_ne_zero_of_half_lt_re
+#print axioms LFunction_eq_zero_re
+#print axioms LFunction_eq_zero_re_of_isPrimitive
+#print axioms riemannZeta_eq_zero_re
