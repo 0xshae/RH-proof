@@ -27,6 +27,7 @@ You don't need to be a mathematician. You do need some patience: the proof is
 
 **Want to look inside?** [How to read the proof](docs/reading-the-proof.md)
 walks from the final theorem down to where the real difficulty lives.
+Questions like "so is it proven?" are answered in the [FAQ](docs/faq.md).
 
 ---
 
