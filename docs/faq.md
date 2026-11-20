@@ -11,7 +11,8 @@ extraordinary evidence, far stronger than a paper nobody has refereed yet.
 ### Why can't a computer just check all the zeros?
 
 There are infinitely many. Computers have checked more than ten trillion,
-all on the line, but a single exception further out would make the hypothesis
+all on the line (Platt and Trudgian, *Bulletin of the London Mathematical
+Society*, 2021), but a single exception further out would make the hypothesis
 false. Only a proof covers all of them.
 
 ### What does Lean actually check?
