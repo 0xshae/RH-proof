@@ -1,0 +1,23 @@
+# Runs steps 1 and 2 (fetch + static audit) so anyone can see the result
+# without running anything. The full kernel build (step 3) is far too large
+# for GitHub's free runners and is run separately.
+name: audit
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Step 1: fetch and verify checksums"
+        run: ./scripts/fetch.sh
+      - name: "Step 2: static audit"
+        run: ./scripts/audit.sh
