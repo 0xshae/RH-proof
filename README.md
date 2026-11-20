@@ -23,6 +23,10 @@ You don't need to be a mathematician. You do need some patience: the proof is
 | 1. Fetch | The files you download are byte-for-byte the ones audited here | ✅ hashes pinned |
 | 2. Static audit | No skipped steps (`sorry`), no new axioms, no kernel bypasses, correct statement | ✅ no red flags |
 | 3. Kernel build | Lean's kernel checks every step; only standard axioms are used | ⏳ not yet run |
+| 4. Re-check | `leanchecker` replays the compiled proof through the kernel again | ⏳ not yet run |
+
+**Want to look inside?** [How to read the proof](docs/reading-the-proof.md)
+walks from the final theorem down to where the real difficulty lives.
 
 ---
 
@@ -100,7 +104,12 @@ for step 3.
 ./scripts/fetch.sh    # 1. download ~240 MB, verify checksums, extract into work/
 ./scripts/audit.sh    # 2. static audit, ~2 minutes, no Lean needed
 ./scripts/verify.sh   # 3. full kernel build in a sandbox, many hours
+./scripts/recheck.sh  # 4. optional independent replay, hours more
 ```
+
+Step 3 needs a big machine. The proof is about eight times the size of
+Mathlib. In Docker Desktop, give the VM as much memory as you can
+(Settings → Resources).
 
 Step 3 runs the proof's code inside a container with **networking switched
 off**, as an unprivileged user, so it can't touch your files or the internet.
@@ -124,6 +133,18 @@ From the static audit (`scripts/audit.sh`):
   standard practice.
 - The proof is about 17.4 million lines, roughly eight times the size of all
   of Mathlib, and `Main` depends on every file.
+- All 9 dependencies come from the official `leanprover` and
+  `leanprover-community` GitHub organisations.
+
+### A caveat on the "Generalized" Riemann Hypothesis claims
+
+`Main.lean` also claims four results about Dirichlet L-functions, a case of
+the Generalized Riemann Hypothesis. **Those four statements are written by the
+proof's authors** (in `Statements.lean`), not taken from Mathlib, so the
+computer can only confirm they are *proved*. Whether they *mean* GRH is for a
+human to judge. They read correctly to us, and step 3 prints them in full so
+you can judge too. The headline `RiemannHypothesis` claim does not have this
+caveat.
 
 ## Repository layout
 
@@ -133,6 +154,8 @@ checksums/             SHA-256 hashes of the exact archive audited here
 scripts/fetch.sh       step 1
 scripts/audit.sh       step 2
 scripts/verify.sh      step 3 (uses verify/)
+scripts/recheck.sh     step 4
 verify/Verify.lean     the questions we ask Lean at the end
 verify/Dockerfile      the sandbox
+docs/                  guides
 ```
