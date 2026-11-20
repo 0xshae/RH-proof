@@ -20,5 +20,7 @@ ARG LEAN_TOOLCHAIN=leanprover/lean4:v4.33.1
 RUN curl -sSfL "https://raw.githubusercontent.com/leanprover/elan/${ELAN_VERSION}/elan-init.sh" \
     | sh -s -- -y --no-modify-path --default-toolchain "${LEAN_TOOLCHAIN}"
 ENV PATH=/home/lean/.elan/bin:$PATH
+# elan downloads toolchains lazily; install now, because the build step has no network.
+RUN elan toolchain install "${LEAN_TOOLCHAIN}" && lean --version
 
 COPY --chown=lean verify/in-container.sh /home/lean/in-container.sh
