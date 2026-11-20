@@ -48,6 +48,13 @@ if grep -qE 'git = "https://github.com/leanprover-community/mathlib4"' "$LEAN/la
 else
   fail "Mathlib comes from somewhere other than the official repository"
 fi
+urls=$(grep -oE '"url": *"[^"]+"' "$LEAN/lake-manifest.json" | cut -d'"' -f4)
+bad=$(printf '%s\n' "$urls" | grep -vE '^https://github\.com/(leanprover-community|leanprover)/[A-Za-z0-9_.-]+$' || true)
+if [ -z "$bad" ]; then
+  pass "all $(printf '%s\n' "$urls" | grep -c .) dependencies come from official Lean / Mathlib GitHub organisations"
+else
+  fail "dependencies from unexpected sources:"; printf '          %s\n' $bad
+fi
 note "Mathlib pinned at commit $(grep -oE 'rev = "[0-9a-f]+"' "$LEAN/lakefile.toml" | head -1 | cut -d'"' -f2)"
 note "Lean toolchain: $(cat "$LEAN/lean-toolchain")"
 matching '^\s*namespace Mathlib' | sed "s|$SRC/|          |"
