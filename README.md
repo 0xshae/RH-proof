@@ -22,7 +22,7 @@ You don't need to be a mathematician. You do need some patience: the proof is
 |---|---|---|
 | 1. Fetch | The files you download are byte-for-byte the ones audited here | ✅ hashes pinned |
 | 2. Static audit | No skipped steps (`sorry`), no new axioms, no kernel bypasses, correct statement | ✅ no red flags |
-| 3. Kernel build | Lean's kernel checks every step; only standard axioms are used | ⏳ not yet run |
+| 3. Kernel build | Lean's kernel checks every step; only standard axioms are used | ⏳ running on a laptop (about a week); [help run it](#run-it-yourself) |
 | 4. Re-check | `leanchecker` replays the compiled proof through the kernel again | ⏳ not yet run |
 
 **Want to look inside?** [How to read the proof](docs/reading-the-proof.md)
@@ -107,13 +107,38 @@ for step 3.
 ```bash
 ./scripts/fetch.sh    # 1. download ~240 MB, verify checksums, extract into work/
 ./scripts/audit.sh    # 2. static audit, ~2 minutes, no Lean needed
-./scripts/verify.sh   # 3. full kernel build in a sandbox, many hours
-./scripts/recheck.sh  # 4. optional independent replay, hours more
+./scripts/verify.sh   # 3. full kernel build in a sandbox, days (see below)
+./scripts/recheck.sh  # 4. optional independent replay, after step 3
 ```
 
-Step 3 needs a big machine. The proof is about eight times the size of
-Mathlib. In Docker Desktop, give the VM as much memory as you can
-(Settings → Resources).
+### How long step 3 takes
+
+Step 3 compiles all 175,187 files of the proof, about eight times the size of
+Mathlib. Measured so far:
+
+| Machine | Speed | Whole proof |
+|---|---|---|
+| Apple M4 Pro laptop, 12 cores, 22 GB for Docker | about 15 files/minute | **about 8 days** of continuous running |
+
+Time scales roughly with core count, so a 64-core workstation or server
+should take about a day and a half. **If you have a machine like that, your run
+would help a lot.** This table is an estimate from the first few hours; please
+add your numbers when you [report your run](#report-your-run).
+
+Practical tips:
+
+- **Memory:** plan on about 2 GB per CPU core. In Docker Desktop, set this in
+  Settings → Resources.
+- **Don't let the machine sleep.** On a Mac, the build pauses whenever the
+  Mac sleeps, including when the lid is closed. Turn on *Settings → Battery
+  → Options → Prevent automatic sleeping on power adapter when the display is
+  off*, and run with `caffeinate -i -s ./scripts/verify.sh`.
+- **Interruptions are fine.** Re-run `./scripts/verify.sh` and it resumes;
+  finished files are kept.
+- **Progress:** files compiled so far, out of the total.
+  ```bash
+  tr '\r' '\n' < work/logs/verify.log | grep -oE '\[[0-9]+/[0-9]+\]' | tail -1
+  ```
 
 Step 3 runs the proof's code in a Docker container with **networking
 disabled**, as an unprivileged user, with no access to your files beyond the
