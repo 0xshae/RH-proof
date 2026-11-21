@@ -135,9 +135,12 @@ Practical tips:
   off*, and run with `caffeinate -i -s ./scripts/verify.sh`.
 - **Interruptions are fine.** Re-run `./scripts/verify.sh` and it resumes;
   finished files are kept.
-- **Progress:** files compiled so far, out of the total.
+- **Progress:** the number of proof files compiled so far, out of 175,187.
+  (Lake's own `[n/m]` counter only counts files it has discovered so far, so
+  it overstates progress.)
   ```bash
-  tr '\r' '\n' < work/logs/verify.log | grep -oE '\[[0-9]+/[0-9]+\]' | tail -1
+  docker run --rm --network none -v rh-verify-build:/p:ro rh-verify \
+    sh -c 'find /p/.lake/build/lib/lean -name "*.olean" | wc -l'
   ```
 
 Step 3 runs the proof's code in a Docker container with **networking
